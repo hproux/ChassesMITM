@@ -54,6 +54,7 @@ namespace AmaknaCore.Sniffer.View
         private Label label10;
         static public int ChoixMap = 0;
         public Microsoft.Win32.RegistryKey keyRegister;
+        public Microsoft.Win32.RegistryKey keyGamePath;
         public static int ResolutionXEcran = SystemInformation.VirtualScreen.Width;
         private Label label11;
         private TextBox textBox_secondDrapeau;
@@ -80,7 +81,9 @@ namespace AmaknaCore.Sniffer.View
             else
             {
                 this.GamePath = selectedPath;
-                File.WriteAllText(Assembly.GetExecutingAssembly().Location.Replace(Assembly.GetExecutingAssembly().GetName().Name + ".exe", "GamePath.txt"), selectedPath);
+                keyGamePath = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("BotChasseMITM", true);
+                keyGamePath.SetValue("GamePath",selectedPath);
+                //File.WriteAllText(Assembly.GetExecutingAssembly().Location.Replace(Assembly.GetExecutingAssembly().GetName().Name + ".exe", "GamePath.txt"), selectedPath);
                 ConsoleManager.Logger.Info("Chemin d'accès défini.");
             }
         }
@@ -126,10 +129,12 @@ namespace AmaknaCore.Sniffer.View
             comboBoxChoixMap.SelectedIndex = 0;
             
             WindowManager.Initialize(this);
-            string path = Assembly.GetExecutingAssembly().Location.Replace(Assembly.GetExecutingAssembly().GetName().Name + ".exe", "GamePath.txt");
-            if (File.Exists(path))
+            keyGamePath = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("BotChasseMITM", true);
+            
+            //string path = Assembly.GetExecutingAssembly().Location.Replace(Assembly.GetExecutingAssembly().GetName().Name + ".exe", "GamePath.txt");
+            if (keyGamePath.GetValue("GamePath")!=null)
             {
-                string path1 = File.ReadAllText(path);
+                string path1 = keyGamePath.GetValue("GamePath").ToString();
                 if (File.Exists(Path.Combine(path1, "Dofus\\Dofus.exe")))
                     this.GamePath = path1;
             }
@@ -342,6 +347,7 @@ namespace AmaknaCore.Sniffer.View
             this.textBox_Haut.ReadOnly = true;
             this.textBox_Haut.Size = new System.Drawing.Size(144, 51);
             this.textBox_Haut.TabIndex = 17;
+            this.textBox_Haut.TextChanged += new System.EventHandler(this.textBox_Haut_TextChanged);
             this.textBox_Haut.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_Haut_KeyDown);
             // 
             // label6
@@ -562,11 +568,11 @@ namespace AmaknaCore.Sniffer.View
 
         private void comboBoxChoixMap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxChoixMap.SelectedText == "Defaut")
+            if (comboBoxChoixMap.SelectedItem == "Defaut")
             {
                 ChoixMap = 0;
             }
-            else if (comboBoxChoixMap.SelectedText == "Village Zoths")
+            else if (comboBoxChoixMap.SelectedItem == "Village Zoths")
             {
                 ChoixMap = 2;
             }
@@ -675,6 +681,11 @@ namespace AmaknaCore.Sniffer.View
         }
 
         private void textBox_secondDrapeau_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_Haut_TextChanged(object sender, EventArgs e)
         {
 
         }

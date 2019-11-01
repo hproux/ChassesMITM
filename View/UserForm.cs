@@ -55,8 +55,8 @@ namespace AmaknaCore.Sniffer.View
     public List<PointOfInterest> ListePointOfInterest;
     public List<IndicesTxt> ListeIndices;
     public List<IndicesCorrespondance> ListeCorrespondance;
-    public string mapStartX = "";
-    public string mapStartY = "";
+    public static string mapStartX = "";
+    public static string mapStartY = "";
     public string indiceX = "";
     public string indiceY = "";
     public static string Direction="";
@@ -72,6 +72,7 @@ namespace AmaknaCore.Sniffer.View
     public static Point ptPremierDrapeau = new Point();
     public static Point ptSecondDrapeau = new Point();
     public static int ecartDrapeau;
+      public static List<string> phorreurMaps = new List<string>();
     public Dictionary<string, object> MapXYDictionary = new Dictionary<string, object>();
 
     public UserForm(SyncClient client)
@@ -837,6 +838,7 @@ namespace AmaknaCore.Sniffer.View
                     MouvementsAuto objMouv = new MouvementsAuto();
                     objMouv.SetDrapeau(DernierFlag++);
                 }
+                phorreurMaps.Clear();
                 ConsoleManager.Logger.Info("Etape actuelle terminée!");
                 return;
             }
@@ -853,6 +855,10 @@ namespace AmaknaCore.Sniffer.View
                 }
                 return;
                 //ConsoleManager.Logger.Warning("Impossible de trouver un phorreur veuillez le trouver manuellement\n");
+            }
+            else
+            {
+                CherchPhorreur = false;
             }
 
             ConsoleManager.Logger.Info("Label reel:" + Label);

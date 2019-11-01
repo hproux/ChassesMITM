@@ -120,12 +120,13 @@ namespace AmaknaCore.Sniffer.View
     {
         DeplAuto = true;
         MouvementsAuto objMouv = new MouvementsAuto();
-        if (UserForm.CherchPhorreur != true)
+        if (UserForm.CherchPhorreur != true && UserForm.indiceDistActu!="")
         {
             objMouv.MouvDirection(UserForm.Direction, Int32.Parse(UserForm.indiceDistActu));
         }
         else
         {
+            UserForm.CherchPhorreur = true;
             objMouv.MouvDirection(UserForm.Direction, 10);
         }
     }

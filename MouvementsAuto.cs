@@ -76,7 +76,8 @@ namespace AmaknaCore.Sniffer
         public void LeftClick()
         {
             //perform click            
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
 
         public void SetCursorPos(int X, int Y)
@@ -108,9 +109,7 @@ namespace AmaknaCore.Sniffer
             ResetSouris = GetCursorPos();
 
             SetCursorPos(AmaknaCore.Sniffer.View.UserForm.ptPremierDrapeau.X, AmaknaCore.Sniffer.View.UserForm.ptPremierDrapeau.Y+(NumDrapeau*AmaknaCore.Sniffer.View.UserForm.ecartDrapeau));
-            await Task.Delay(50);
             LeftClick();
-            await Task.Delay(50);
             SetCursorPos(ResetSouris.X, ResetSouris.Y);
         }
 
@@ -155,9 +154,7 @@ namespace AmaknaCore.Sniffer
                 {
                     ResetSouris = GetCursorPos();
                     SetCursorPos(ClicPosition.X, ClicPosition.Y);
-                    await Task.Delay(50);
                     LeftClick();
-                    await Task.Delay(100);
                     SetCursorPos(ResetSouris.X, ResetSouris.Y);
                     ColorMilieuEcran = GetColorAt(ptMilieuEcran);
                     ColorMilieuEcran2 = GetColorAt(ptMilieuEcran2);
@@ -194,12 +191,48 @@ namespace AmaknaCore.Sniffer
                     {
                         await Task.Delay(2000);//Tempo pour charger la map(utilisation des trames a la place ?)
                         bool isPhorreurHere = SommeCouleurPixEcran(CouleurPhorreur, CouleurPhorreur2);//On test si un phorreur est sur l'ecran
+                        string PosActu="";
                         if (isPhorreurHere == true)
                         {
                             AmaknaCore.Sniffer.Managers.ConsoleManager.Logger.Info("Phorreur détécté sur cette map");
-                            AmaknaCore.Sniffer.View.UserForm.CherchPhorreur = false;
-                            SetDrapeau(AmaknaCore.Sniffer.View.UserForm.DernierFlag);
-                            return;
+                            int PosDepl=0;
+                            switch (Direction)
+                            {
+                                case "2":
+                                    PosDepl = Int32.Parse(AmaknaCore.Sniffer.View.UserForm.mapStartY) + (i + 1);
+                                    PosActu = AmaknaCore.Sniffer.View.UserForm.mapStartX.ToString() + PosDepl;
+                                    break;
+                                case "4":
+                                    PosDepl = Int32.Parse(AmaknaCore.Sniffer.View.UserForm.mapStartX) - (i + 1);
+                                    PosActu = PosDepl + AmaknaCore.Sniffer.View.UserForm.mapStartY.ToString();
+                                    break;
+                                case "6":
+                                    PosDepl = Int32.Parse(AmaknaCore.Sniffer.View.UserForm.mapStartY) - (i + 1);
+                                    PosActu = AmaknaCore.Sniffer.View.UserForm.mapStartX.ToString() + PosDepl;
+                                    break;
+                                case "0":
+                                    PosDepl = Int32.Parse(AmaknaCore.Sniffer.View.UserForm.mapStartX) + (i + 1);
+                                    PosActu = PosDepl + AmaknaCore.Sniffer.View.UserForm.mapStartY.ToString();
+                                    break;
+                            }
+
+                            if (AmaknaCore.Sniffer.View.UserForm.phorreurMaps != null && AmaknaCore.Sniffer.View.UserForm.CherchPhorreur == true)
+                            {
+                                if (AmaknaCore.Sniffer.View.UserForm.phorreurMaps.Contains(PosActu) == false) {
+                                    AmaknaCore.Sniffer.View.UserForm.phorreurMaps.Add(PosActu);
+                                    SetDrapeau(AmaknaCore.Sniffer.View.UserForm.DernierFlag);
+                                    AmaknaCore.Sniffer.View.UserForm.CherchPhorreur = false;
+                                    return;
+                                }
+                            }
+                            else if(AmaknaCore.Sniffer.View.UserForm.CherchPhorreur==true)
+                            {
+                                AmaknaCore.Sniffer.View.UserForm.phorreurMaps.Add(PosActu);
+                                SetDrapeau(AmaknaCore.Sniffer.View.UserForm.DernierFlag);
+                                AmaknaCore.Sniffer.View.UserForm.CherchPhorreur = false;
+                                return;
+                            }
+                            
                         }
                         else if (i >= 10)
                         {
