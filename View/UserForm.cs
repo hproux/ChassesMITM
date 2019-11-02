@@ -72,7 +72,8 @@ namespace AmaknaCore.Sniffer.View
     public static Point ptPremierDrapeau = new Point();
     public static Point ptSecondDrapeau = new Point();
     public static int ecartDrapeau;
-      public static List<string> phorreurMaps = new List<string>();
+    public static bool isMooving = false;
+    public static List<string> phorreurMaps = new List<string>();
     public Dictionary<string, object> MapXYDictionary = new Dictionary<string, object>();
 
     public UserForm(SyncClient client)
